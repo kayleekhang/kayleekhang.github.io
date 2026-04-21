@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Databases Enhancement</title>
+</head>
+
+<body>
+  <h1>Databases Enhancement</h1>
+
+  <h2>Artifact Overview</h2>
+  <p>
+    The artifact chosen is my thermostat project from CS-350, which introduced
+    me to the fundamentals of embedded systems development. The project involved
+    developing a thermostat using a Raspberry Pi and a breadboard, including
+    connections to buttons and an LCD screen. Through this project, I also gained
+    experience working with serial communication protocols such as I2C.
+  </p>
+
+  <h2>Reason for Selection</h2>
+  <p>
+    I selected this artifact because it represents a stateful embedded system.
+    Adding a database allows the system to track behavior over time, which is
+    important for debugging and monitoring. In real-world systems, storing this
+    type of data is critical for troubleshooting, analysis, and long-term tracking.
+  </p>
+
+  <h2>Enhancements and Improvements</h2>
+  <p>
+    To enhance the project, I introduced a database layer using SQLite. This
+    allows the thermostat to persist data rather than relying only on in-memory
+    values. I also redesigned the database schema to separate configuration data
+    from system behavior.
+  </p>
+
+  <h2>Code Comparison</h2>
+
+  <h3>Original Database Implementation</h3>
+  <p>
+    The original implementation used a single table to store all thermostat data.
+    While functional, this design mixed system behavior and configuration data,
+    making it harder to query and scale.
+  </p>
+
+  <pre>
+import sqlite3
+from datetime import datetime
+
+DB_NAME = "thermostat.db"
+
+class DatabaseManager:
+    def __init__(self):
+        self.conn = sqlite3.connect(DB_NAME)
+        self.create_table()
+
+    def create_table(self):
+        self.conn.execute("""
+        CREATE TABLE IF NOT EXISTS logs (
+            timestamp TEXT,
+            state TEXT,
+            temperature REAL,
+            setpoint INTEGER
+        )
+        """)
+
+    def log(self, state, temp, setpoint):
+        self.conn.execute(
+            "INSERT INTO logs VALUES (?, ?, ?, ?)",
+            (datetime.now().isoformat(), state, temp, setpoint)
+        )
+        self.conn.commit()
+  </pre>
+
+  <h3>Enhanced Database Implementation</h3>
+  <p>
+    The enhanced design introduces a relational structure by separating settings
+    and logs into different tables. This improves organization and enables more
+    advanced queries using JOIN operations.
+  </p>
+
+  <pre>
+-- settings table
+CREATE TABLE settings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    mode TEXT NOT NULL CHECK(mode IN ('off', 'heat', 'cool')),
+    setpoint INTEGER NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+-- logs table
+CREATE TABLE logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp TEXT NOT NULL,
+    temperature REAL NOT NULL,
+    action TEXT NOT NULL CHECK(action IN ('OFF', 'HEATING', 'COOLING', 'IDLE', 'HOLD')),
+    setting_id INTEGER NOT NULL,
+    FOREIGN KEY (setting_id) REFERENCES settings(id)
+);
+  </pre>
+
+  <h3>Enhanced Functionality (Python)</h3>
+  <pre>
+def create_setting(self, mode, setpoint):
+    timestamp = datetime.now().isoformat()
+    conn = self.conn.execute("""
+        INSERT INTO settings (mode, setpoint, updated_at)
+        VALUES (?, ?, ?)
+    """, (mode, setpoint, timestamp))
+    self.conn.commit()
+    return conn.lastrowid
+
+def get_latest_setting(self):
+    return self.conn.execute("""
+        SELECT id, mode, setpoint, updated_at
+        FROM settings
+        ORDER BY id DESC
+        LIMIT 1
+    """).fetchone()
+
+def update_setting(self, setting_id, mode, setpoint):
+    timestamp = datetime.now().isoformat()
+    self.conn.execute("""
+        UPDATE settings
+        SET mode = ?, setpoint = ?, updated_at = ?
+        WHERE id = ?
+    """, (mode, setpoint, timestamp, setting_id))
+    self.conn.commit()
+
+def log_reading(self, temperature, action, setting_id):
+    timestamp = datetime.now().isoformat()
+    self.conn.execute("""
+        INSERT INTO logs (timestamp, temperature, action, setting_id)
+        VALUES (?, ?, ?, ?)
+    """, (timestamp, temperature, action, setting_id))
+    self.conn.commit()
+
+def get_recent_logs(self, limit=10):
+    return self.conn.execute("""
+        SELECT logs.id, logs.timestamp, logs.temperature, logs.action,
+               settings.mode, settings.setpoint
+        FROM logs
+        JOIN settings ON logs.setting_id = settings.id
+        ORDER BY logs.id DESC
+        LIMIT ?
+    """, (limit,)).fetchall()
+
+def get_average_temperature(self):
+    return self.conn.execute("""
+        SELECT AVG(temperature)
+        FROM logs
+    """).fetchone()[0]
+  </pre>
+
+  <h2>Key Improvements</h2>
+  <ul>
+    <li><strong>Normalization:</strong> Separated logs and settings into distinct tables.</li>
+    <li><strong>Relational Design:</strong> Introduced foreign key relationships.</li>
+    <li><strong>Advanced Queries:</strong> Used JOIN operations to combine system data.</li>
+    <li><strong>Data Integrity:</strong> Added constraints for valid modes and actions.</li>
+    <li><strong>Scalability:</strong> Design supports expansion to additional sensors or features.</li>
+  </ul>
+
+  <h2>Outcome Alignment</h2>
+  <p>
+    This enhancement demonstrates the ability to use well-founded techniques,
+    skills, and tools in computing practices to implement solutions that deliver
+    value and accomplish industry-specific goals. The use of a structured database
+    reflects real-world practices in IoT systems and monitoring platforms.
+  </p>
+
+  <h2>Reflection</h2>
+  <p>
+    During this enhancement, I revisited more advanced database concepts such as
+    relational design and JOIN operations. Implementing these queries required
+    careful debugging and a deeper understanding of how data should be structured.
+  </p>
+
+  <p>
+    Overall, this process strengthened my ability to integrate databases into a
+    real system and reinforced how proper data design improves both functionality
+    and maintainability.
+  </p>
+
+</body>
+</html>

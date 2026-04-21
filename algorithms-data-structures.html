@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Algorithms and Data Structures Enhancement</title>
+</head>
+
+<body>
+  <h1>Algorithms and Data Structures Enhancement</h1>
+
+  <h2>Artifact Overview</h2>
+  <p>
+    The artifact used for this enhancement is my thermostat project from CS-350.
+    The system reads temperature data from a sensor and determines behavior based
+    on a selected mode (off, heat, or cool). The project originally relied on
+    direct comparisons between temperature and setpoint to control system output.
+  </p>
+
+  <h2>Original Design</h2>
+  <p>
+    The original implementation used direct temperature comparisons tied to LED
+    behavior. In heat mode, the system activated whenever the temperature was
+    below the setpoint. In cool mode, it activated whenever the temperature was
+    above the setpoint. While this approach functioned correctly, it created
+    unstable behavior when the temperature fluctuated near the setpoint,
+    resulting in rapid toggling between states.
+  </p>
+
+  <pre>
+def updateLights(self):
+    temp = floor(self.getFahrenheit())
+    redLight.off()
+    blueLight.off()
+
+    if self.current_state.id == "heat":
+        if temp < self.setPoint:
+            redLight.pulse()
+        else:
+            redLight.on()
+
+    if self.current_state.id == "cool":
+        if temp > self.setPoint:
+            blueLight.pulse()
+        else:
+            blueLight.on()
+  </pre>
+
+  <h2>Enhanced Algorithm</h2>
+  <p>
+    To improve system stability, I implemented a hysteresis-based algorithm.
+    Hysteresis introduces a buffer zone around the setpoint, preventing the
+    system from rapidly switching states due to small fluctuations in temperature.
+  </p>
+
+  <ul>
+    <li>Heating starts only below a lower threshold</li>
+    <li>Cooling starts only above an upper threshold</li>
+    <li>A "hold" state prevents unnecessary transitions</li>
+  </ul>
+
+  <pre>
+def update(self):
+    temp = floor(self.sensor.get_fahrenheit())
+
+    if self.state == "heat":
+        if temp <= self.setpoint - HYSTERESIS:
+            action = "HEATING"
+        elif temp >= self.setpoint:
+            action = "IDLE"
+        else:
+            action = "HOLD"
+
+    elif self.state == "cool":
+        if temp >= self.setpoint + HYSTERESIS:
+            action = "COOLING"
+        elif temp <= self.setpoint:
+            action = "IDLE"
+        else:
+            action = "HOLD"
+    else:
+        action = "OFF"
+
+    self.db.log(self.state, temp, self.setpoint)
+    self.serial.send(self.state, temp, self.setpoint)
+
+    return temp, action
+  </pre>
+
+  <h2>Key Improvements</h2>
+  <ul>
+    <li>
+      <strong>Algorithm Stability:</strong> Reduced rapid toggling near the
+      setpoint by introducing a buffer range.
+    </li>
+    <li>
+      <strong>State Management:</strong> Added an intermediate "HOLD" state to
+      better control transitions.
+    </li>
+    <li>
+      <strong>Efficiency:</strong> Reduced unnecessary hardware state changes,
+      improving overall system performance.
+    </li>
+    <li>
+      <strong>Real-World Application:</strong> Implemented logic commonly used in
+      real thermostat systems.
+    </li>
+  </ul>
+
+  <h2>Outcome Alignment</h2>
+  <p>
+    This enhancement demonstrates the ability to apply algorithmic thinking to
+    improve system behavior. By replacing a simple comparison-based approach with
+    a hysteresis-based algorithm, the system became more stable and efficient.
+    This aligns with course outcomes related to using well-founded techniques
+    and improving computational solutions.
+  </p>
+
+  <h2>Reflection</h2>
+  <p>
+    Through this enhancement, I learned how small changes in algorithm design can
+    significantly impact system behavior. Implementing hysteresis required me to
+    think more carefully about state transitions and edge cases. One challenge
+    was ensuring that the thresholds were applied correctly without introducing
+    logical errors. Overall, this process strengthened my understanding of how
+    algorithms influence real-world systems.
+  </p>
+
+</body>
+</html>

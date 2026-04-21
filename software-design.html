@@ -24,59 +24,147 @@
     functional requirements, it was not designed with scalability or
     maintainability in mind. The implementation consisted of a single monolithic
     file that mixed multiple concerns, lacked structure, and did not include
-    data persistence. The thermostat logic relied on a basic state machine with
-    minimal abstraction. This made it a strong candidate for improvement through
-    better software design practices.
+    clear separation between hardware interaction, business logic, and output.
+    This made it a strong candidate for improvement through better software
+    design practices.
   </p>
 
   <h2>Enhancements and Improvements</h2>
   <p>
     To improve the system, I refactored the original monolithic implementation
-    into a modular architecture composed of five separate Python modules. My
-    approach focused on separating concerns and designing components that could
-    operate independently while still working together as a cohesive system.
+    into a modular architecture composed of separate Python modules. My approach
+    focused on separating concerns and designing components that could operate
+    independently while still working together as a cohesive system.
   </p>
 
-  <h3>Key Design Improvements</h3>
+  <h3>Original Design</h3>
+  <p>
+    In the original version, the thermostat logic, display behavior, hardware
+    access, and serial communication were all combined into one file. This
+    worked for a prototype, but it made the code harder to maintain and extend.
+  </p>
+
+  <pre>
+class TemperatureMachine(StateMachine):
+    off = State(initial=True)
+    heat = State()
+    cool = State()
+
+    setPoint = 72
+
+    cycle = (
+        off.to(heat) |
+        heat.to(cool) |
+        cool.to(off)
+    )
+
+    def updateLights(self):
+        temp = floor(self.getFahrenheit())
+        redLight.off()
+        blueLight.off()
+
+        if self.current_state.id == "off":
+            redLight.off()
+            blueLight.off()
+            return
+
+        if self.current_state.id == "heat":
+            blueLight.off()
+            if temp < self.setPoint:
+                redLight.pulse(fade_in_time=1, fade_out_time=1, background=True)
+            else:
+                redLight.on()
+            return
+
+        if self.current_state.id == "cool":
+            redLight.off()
+            if temp > self.setPoint:
+                blueLight.pulse(fade_in_time=1, fade_out_time=1, background=True)
+            else:
+                blueLight.on()
+            return
+  </pre>
+
+  <h3>Refactored Design</h3>
+  <p>
+    In the enhanced version, I separated the system into focused modules. Each
+    module has a single responsibility, which improves readability,
+    maintainability, and flexibility.
+  </p>
+
+  <pre>
+from sensor_manager import SensorManager
+from database_manager import DatabaseManager
+from serial_manager import SerialManager
+from thermostat_controller import ThermostatController
+from display_manager import DisplayManager
+
+sensor = SensorManager()
+db = DatabaseManager()
+serial = SerialManager()
+display = DisplayManager()
+
+thermo = ThermostatController(sensor, db, serial)
+
+while True:
+    temp, action = thermo.update()
+    display.update(temp, thermo.state, thermo.setpoint)
+    sleep(5)
+  </pre>
+
+  <h3>Example of Separation of Concerns</h3>
+  <p>
+    Instead of keeping all logic in one file, the redesigned system assigns
+    responsibilities to dedicated classes.
+  </p>
+
+  <pre>
+class SensorManager:
+    def get_fahrenheit(self):
+        t = self.sensor.temperature
+        return ((9/5) * t) + 32
+  </pre>
+
+  <pre>
+class SerialManager:
+    def send(self, state, temp, setpoint):
+        msg = f"{state},{temp},{setpoint}\n"
+        self.ser.write(msg.encode())
+  </pre>
+
+  <pre>
+class DisplayManager:
+    def update(self, temp, state, setpoint):
+        print(f"{state.upper()} | Temp: {temp}F | Set: {setpoint}F")
+  </pre>
+
+  <pre>
+class ThermostatController:
+    def __init__(self, sensor, db, serial):
+        self.sensor = sensor
+        self.db = db
+        self.serial = serial
+        self.state = "off"
+        self.setpoint = 72
+  </pre>
+
+  <h2>Key Design Improvements</h2>
   <ul>
-    <li>
-      <strong>Modular Architecture:</strong> Broke the application into multiple
-      modules to improve readability, maintainability, and scalability.
-    </li>
-    <li>
-      <strong>Composition-Based Design:</strong> Used composition instead of
-      inheritance, allowing components to be flexible and easily replaceable.
-    </li>
-    <li>
-      <strong>Database Integration:</strong> Introduced an SQLite-based module
-      for logging thermostat data, supporting persistence in an embedded
-      environment.
-    </li>
-    <li>
-      <strong>Separation of Concerns:</strong>
-      <ul>
-        <li>Display Manager handles all output logic</li>
-        <li>Sensor Manager abstracts temperature readings</li>
-        <li>Serial Manager handles communication protocols</li>
-        <li>Database Manager handles data storage</li>
-        <li>Thermostat Controller orchestrates the system</li>
-      </ul>
-    </li>
-    <li>
-      <strong>Hardware Abstraction:</strong> Designed modules so hardware
-      components (e.g., sensors or communication protocols) can be replaced
-      without impacting other parts of the system.
-    </li>
+    <li><strong>Modular Architecture:</strong> Broke the application into multiple modules to improve readability and maintainability.</li>
+    <li><strong>Composition-Based Design:</strong> Built the system from smaller components that work together instead of placing all functionality in one class.</li>
+    <li><strong>Separation of Concerns:</strong> Sensor, display, serial communication, database, and controller logic were separated into dedicated modules.</li>
+    <li><strong>Hardware Abstraction:</strong> Hardware-dependent code is isolated, making future replacements easier.</li>
+    <li><strong>Extensibility:</strong> The design makes it easier to add features such as improved storage, new sensors, or additional communication methods.</li>
   </ul>
 
   <h2>System Design Overview</h2>
   <p>
     The redesigned system follows a composition-based architecture where the
-    <strong>thermostat controller</strong> coordinates interactions between
-    independent modules. Each module has a single responsibility, which reduces
-    coupling and improves testability. This structure allows future enhancements,
-    such as swapping sensors or adding new communication protocols, with minimal
-    changes to the overall system.
+    thermostat controller coordinates interactions between independent modules.
+    Each module has a single responsibility, which reduces coupling and improves
+    testability. This structure allows future enhancements, such as swapping
+    sensors or adding new communication protocols, with minimal changes to the
+    overall system.
   </p>
 
   <h2>Outcome and Impact</h2>
