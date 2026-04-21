@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Software Design and Engineering Enhancement</title>
+</head>
+
+<body>
+  <h1>Software Design and Engineering Enhancement</h1>
+
+  <h2>Artifact Overview</h2>
+  <p>
+    The artifact chosen is my thermostat project from CS-350, which introduced
+    me to the fundamentals of embedded systems development. The project involved
+    developing a thermostat using a Raspberry Pi and a breadboard, including
+    connections to buttons, LEDs, and an LCD screen. Through this project, I also
+    gained experience working with serial communication protocols such as I2C.
+  </p>
+
+  <h2>Reason for Selection</h2>
+  <p>
+    I selected this artifact because I am interested in pursuing a career in
+    embedded software engineering. While the original project successfully met
+    functional requirements, it was not designed with scalability or
+    maintainability in mind. The implementation consisted of a single monolithic
+    file that mixed multiple concerns, lacked structure, and did not include
+    data persistence. The thermostat logic relied on a basic state machine with
+    minimal abstraction. This made it a strong candidate for improvement through
+    better software design practices.
+  </p>
+
+  <h2>Enhancements and Improvements</h2>
+  <p>
+    To improve the system, I refactored the original monolithic implementation
+    into a modular architecture composed of five separate Python modules. My
+    approach focused on separating concerns and designing components that could
+    operate independently while still working together as a cohesive system.
+  </p>
+
+  <h3>Key Design Improvements</h3>
+  <ul>
+    <li>
+      <strong>Modular Architecture:</strong> Broke the application into multiple
+      modules to improve readability, maintainability, and scalability.
+    </li>
+    <li>
+      <strong>Composition-Based Design:</strong> Used composition instead of
+      inheritance, allowing components to be flexible and easily replaceable.
+    </li>
+    <li>
+      <strong>Database Integration:</strong> Introduced an SQLite-based module
+      for logging thermostat data, supporting persistence in an embedded
+      environment.
+    </li>
+    <li>
+      <strong>Separation of Concerns:</strong>
+      <ul>
+        <li>Display Manager handles all output logic</li>
+        <li>Sensor Manager abstracts temperature readings</li>
+        <li>Serial Manager handles communication protocols</li>
+        <li>Database Manager handles data storage</li>
+        <li>Thermostat Controller orchestrates the system</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Hardware Abstraction:</strong> Designed modules so hardware
+      components (e.g., sensors or communication protocols) can be replaced
+      without impacting other parts of the system.
+    </li>
+  </ul>
+
+  <h2>System Design Overview</h2>
+  <p>
+    The redesigned system follows a composition-based architecture where the
+    <strong>thermostat controller</strong> coordinates interactions between
+    independent modules. Each module has a single responsibility, which reduces
+    coupling and improves testability. This structure allows future enhancements,
+    such as swapping sensors or adding new communication protocols, with minimal
+    changes to the overall system.
+  </p>
+
+  <h2>Outcome and Impact</h2>
+  <p>
+    These improvements significantly enhanced the system’s modularity and
+    maintainability. By separating concerns and using composition, the system is
+    now easier to extend, debug, and adapt to new requirements. This approach
+    reflects industry best practices for embedded systems design, where resource
+    constraints and hardware dependencies require thoughtful architecture.
+  </p>
+
+</body>
+</html>
