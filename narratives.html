@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Artifact Narratives</title>
+</head>
+
+<body>
+  <h1>Artifact Narratives</h1>
+
+  <p>
+    This page provides the narratives that accompany the artifacts included in my
+    ePortfolio. Each narrative explains why the artifact was selected, what I
+    learned through the enhancement process, and how the artifact demonstrates
+    my growth throughout the Computer Science program.
+  </p>
+
+  <h2>Software Design and Engineering Narrative</h2>
+
+  <h3>Artifact Description</h3>
+  <p>
+    The artifact selected for this category is my thermostat project from
+    CS-350. This project was created during my study of embedded systems and
+    involved building a thermostat using a Raspberry Pi, buttons, LEDs, an LCD
+    display, and sensor communication through I2C. The original version was
+    designed as a working prototype that demonstrated the core functionality of
+    an embedded thermostat system.
+  </p>
+
+  <h3>Justification for Inclusion</h3>
+  <p>
+    I included this artifact in my ePortfolio because it demonstrates both my
+    technical foundation in embedded systems and my ability to improve software
+    design through refactoring. The original artifact was functional, but it was
+    implemented as a monolithic file that mixed hardware control, display logic,
+    communication, and thermostat logic in one place. This made it a strong
+    candidate for enhancement in software design and engineering.
+  </p>
+
+  <p>
+    The enhanced version better showcases my software development skills because
+    I redesigned the project into separate modules with distinct
+    responsibilities. This improvement demonstrates my understanding of modular
+    design, composition, maintainability, and separation of concerns. Through
+    this enhancement, I showed that I could move beyond simply writing working
+    code and instead focus on creating code that is organized, scalable, and
+    easier to extend.
+  </p>
+
+  <h3>Reflection</h3>
+  <p>
+    Through this enhancement, I learned how important architecture is in
+    software development. A program can work correctly while still being
+    difficult to maintain, test, or scale. Refactoring this artifact helped me
+    better understand how composition-based design can improve flexibility and
+    reduce tight coupling between components.
+  </p>
+
+  <p>
+    One of the main challenges I faced was deciding how to divide the system
+    into modules in a way that made sense without overcomplicating the design. I
+    also had to think more critically about which responsibilities belonged in
+    the controller and which should be delegated to other components such as the
+    sensor, database, serial, and display managers. Feedback and review helped
+    reinforce the importance of reducing complexity and making the system easier
+    to understand. Overall, this artifact improvement helped me meet course
+    outcomes related to software design, applying computing practices, and
+    building solutions that are more maintainable and valuable in real-world
+    environments.
+  </p>
+
+  <h2>Algorithms and Data Structures Narrative</h2>
+
+  <h3>Artifact Description</h3>
+  <p>
+    The artifact for this category is also based on my thermostat project from
+    CS-350. In the original implementation, the control logic used direct
+    temperature comparisons to determine heating and cooling behavior. Although
+    this was functional, it could lead to unstable behavior when the
+    temperature fluctuated around the setpoint.
+  </p>
+
+  <h3>Justification for Inclusion</h3>
+  <p>
+    I selected this artifact because it demonstrates my ability to improve the
+    logic of an existing system rather than only changing its appearance or
+    structure. The enhancement focused on adding hysteresis to the thermostat
+    algorithm. This created a buffer around the setpoint so the thermostat would
+    not rapidly switch between states when the temperature changed by only a
+    small amount.
+  </p>
+
+  <p>
+    This enhancement showcases my skills in algorithmic thinking, problem
+    solving, and designing more stable state-based control logic. It also shows
+    my ability to connect software behavior with practical real-world system
+    requirements. The improvement made the thermostat more efficient, stable, and
+    realistic compared to the original direct-comparison approach.
+  </p>
+
+  <h3>Reflection</h3>
+  <p>
+    As I worked on this enhancement, I learned that algorithm improvements do
+    not always have to be large or complex to have meaningful impact. Adding
+    hysteresis changed the behavior of the thermostat in a significant way by
+    improving stability and reducing unnecessary toggling. This made me think
+    more carefully about how algorithms influence real-world system behavior over
+    time.
+  </p>
+
+  <p>
+    A challenge I faced was making sure the updated logic still remained easy to
+    understand while also being more effective than the original version. I had
+    to compare the old behavior with the new behavior and clearly explain why
+    the enhancement mattered. This process helped me partially and fully meet
+    course outcomes related to algorithms, data-driven reasoning, and improving
+    system performance through better control logic.
+  </p>
+
+  <h2>Databases Narrative</h2>
+
+  <h3>Artifact Description</h3>
+  <p>
+    The artifact for the database category is my thermostat project from
+    CS-350 enhanced with SQLite support. The original project did not persist
+    thermostat information over time. The enhanced version introduced a database
+    layer so that settings and system logs could be stored and queried.
+  </p>
+
+  <h3>Justification for Inclusion</h3>
+  <p>
+    I included this artifact because it demonstrates how I expanded a small
+    embedded system into a more realistic software solution. By adding a
+    database, I improved the project’s ability to support debugging, monitoring,
+    and long-term analysis. This enhancement better reflects how real-world
+    monitoring systems, IoT devices, and smart technologies store and use data.
+  </p>
+
+  <p>
+    The improved version highlights my skills in database design, CRUD
+    operations, relational thinking, and integrating persistent storage into an
+    application. I separated logs and settings into different tables, which
+    improved organization and made the system easier to query and understand.
+    This demonstrates a stronger understanding of how data should be structured
+    instead of simply stored in a flat format.
+  </p>
+
+  <h3>Reflection</h3>
+  <p>
+    Through this enhancement, I learned that database design requires more than
+    just creating a table and storing rows. I had to think about how data
+    relates across the system, how to separate concerns within the schema, and
+    how to retrieve meaningful information through queries and joins.
+  </p>
+
+  <p>
+    One challenge I faced was refreshing my understanding of more advanced
+    database concepts such as joins and relational structure. I also needed to
+    ensure that the database layer worked cleanly with the rest of the
+    thermostat application. This experience helped reinforce my understanding of
+    practical database integration and allowed me to meet course outcomes
+    related to databases, software engineering, and using industry-relevant
+    tools to create meaningful solutions.
+  </p>
+
+</body>
+</html>
